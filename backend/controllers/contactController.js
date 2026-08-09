@@ -1,5 +1,11 @@
+import dns from 'dns';
 import nodemailer from 'nodemailer';
 import ContactMessage from '../models/ContactMessage.js';
+
+// Prioritize IPv4 lookups globally to prevent connection failures in IPv6-restricted cloud environments
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 export const submitContact = async (req, res) => {
   const { name, email, message } = req.body;
@@ -22,10 +28,14 @@ export const submitContact = async (req, res) => {
 
     // 2. Configure SMTP Transporter
     // Added family: 4 to force IPv4 and prevent ENETUNREACH network errors on IPv6-restricted environments like Render
+    // Configure transporter manually using port 465 for Gmail to force IPv4
+    // Nodemailer's built-in 'service: gmail' profile can override/ignore the family option.
     const transporter = nodemailer.createTransport(
       host === 'smtp.gmail.com' || user.endsWith('@gmail.com')
         ? {
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: { user, pass },
             connectionTimeout: 8000,
             socketTimeout: 8000,
