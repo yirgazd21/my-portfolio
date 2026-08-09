@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import dns from 'dns';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -8,6 +9,12 @@ import routes from './routes/index.js';
 import nodemailer from 'nodemailer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Render/cloud runtimes can prefer IPv6 for smtp.gmail.com, which fails here.
+// Prefer IPv4 before any SMTP verification or request handling runs.
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 await connectDB();
 
