@@ -13,7 +13,30 @@ await connectDB();
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+const allowedOrigins = [
+  ...(process.env.CLIENT_URLS || '').split(','),
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+]
+  .map((origin) => origin?.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser clients and same-origin requests with no Origin header.
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some((allowedOrigin) => allowedOrigin === origin);
+    if (isAllowed) return callback(null, true);
+
+    console.warn(`[CORS] Blocked request from origin: ${origin}`);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -60,5 +83,6 @@ const verifySMTP = async () => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`[CORS] Allowed origins: ${allowedOrigins.join(', ') || '(none configured)'}`);
   verifySMTP();
 });
