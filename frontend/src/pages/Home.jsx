@@ -21,7 +21,7 @@ export default function Home() {
         <Contact />
       </main>
       <footer className="text-center py-8 text-dark-text text-sm font-mono border-t border-dark-border">
-        <p>Built with <span className="text-primary-600 dark:text-primary-400">MERN</span> + <span className="text-accent">Framer Motion</span> · © {new Date().getFullYear()} Alex Bekele</p>
+        <p>Built with <span className="text-primary-600 dark:text-primary-400">MERN</span> + <span className="text-accent">Framer Motion</span> · © {new Date().getFullYear()} Yirgalem Zegeye</p>
       </footer>
     </div>
   );

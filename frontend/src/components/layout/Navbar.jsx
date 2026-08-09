@@ -44,7 +44,7 @@ export default function Navbar() {
           whileHover={{ scale: 1.05 }}
         >
           <span className="gradient-text">&lt;</span>
-          <span className="text-dark-title">Dev</span>
+          <span className="text-dark-title">YZ Dev</span>
           <span className="gradient-text">/&gt;</span>
         </motion.a>
 

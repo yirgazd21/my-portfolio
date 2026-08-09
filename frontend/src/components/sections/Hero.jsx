@@ -38,7 +38,7 @@ export default function Hero() {
       >
         Hi, I'm{' '}
         <span className="gradient-text">
-          Alex Bekele
+        Yirgalem Zegeye
         </span>
       </motion.h1>
 
@@ -51,10 +51,10 @@ export default function Hero() {
       >
         <TypeAnimation
           sequence={[
-            'Full-Stack Engineer', 2000,
-            'MERN Stack Developer', 2000,
-            'API Architect', 2000,
-            'Open Source Contributor', 2000,
+            'Full-Stack Developer', 2000,
+            'MERN Stack Engineer', 2000,
+            'AI Solutions Developer', 2000,
+            'Backend & API Developer', 2000,
           ]}
           wrapper="span"
           speed={50}
@@ -69,8 +69,7 @@ export default function Hero() {
         transition={{ duration: 0.7, delay: 0.45 }}
         className="text-dark-text max-w-2xl text-lg leading-relaxed mb-10"
       >
-        I craft scalable web applications with clean architecture and exceptional user
-        experiences — from pixel-perfect UIs to bulletproof REST APIs.
+        I design and build scalable web systems with modern technologies, combining clean architecture, real-time functionality, and AI-powered solutions to solve real-world problems.
       </motion.p>
 
       {/* CTAs */}

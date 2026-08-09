@@ -52,26 +52,40 @@ export default function About() {
           {/* Text */}
           <div className="space-y-6">
             <RevealOnScroll delay={0.1}>
-              <p className="text-dark-text text-lg leading-relaxed">
-                I'm a passionate Full-Stack Software Engineer from{' '}
-                <span className="text-primary-600 dark:text-primary-400 font-semibold">Addis Ababa, Ethiopia</span>, 
-                specializing in building production-grade applications using the{' '}
-                <span className="text-accent font-semibold">MERN stack</span>.
-              </p>
-            </RevealOnScroll>
-            <RevealOnScroll delay={0.2}>
-              <p className="text-dark-text leading-relaxed">
-                With 5+ years of experience, I've led teams, architected microservices, and 
-                shipped products used by tens of thousands of users globally. I love the 
-                intersection of great engineering and great design.
-              </p>
-            </RevealOnScroll>
-            <RevealOnScroll delay={0.3}>
-              <p className="text-dark-text leading-relaxed">
-                When I'm not coding, I contribute to open source, mentor junior devs, 
-                and explore the latest in distributed systems and edge computing.
-              </p>
-            </RevealOnScroll>
+  <p className="text-dark-text text-lg leading-relaxed">
+    I'm a passionate{' '}
+    <span className="text-primary-600 dark:text-primary-400 font-semibold">
+      Full-Stack Developer
+    </span>{' '}
+    from{' '}
+    <span className="text-primary-600 dark:text-primary-400 font-semibold">
+      Ethiopia
+    </span>
+    , focused on building modern, scalable, and user-friendly software applications.
+  </p>
+</RevealOnScroll>
+
+<RevealOnScroll delay={0.2}>
+  <p className="text-dark-text leading-relaxed">
+    I work with a wide range of technologies, including{' '}
+    <span className="text-accent font-semibold">
+      JavaScript, Java, Python, PHP, React, Node.js, Express, and SQL/NoSQL databases
+    </span>
+    . I enjoy building responsive web applications, REST APIs, real-time systems,
+    and AI-powered solutions.
+  </p>
+</RevealOnScroll>
+
+<RevealOnScroll delay={0.3}>
+  <p className="text-dark-text leading-relaxed">
+    I'm passionate about solving real-world problems through software and continuously
+    improving my skills in{' '}
+    <span className="text-accent font-semibold">
+      software architecture, backend development, AI, and system design
+    </span>
+    . I enjoy exploring new technologies and turning ideas into practical solutions.
+  </p>
+</RevealOnScroll>
 
             {/* Stats */}
             <RevealOnScroll delay={0.4}>
