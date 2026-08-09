@@ -15,75 +15,25 @@ export const submitContact = async (req, res) => {
   }
 
   try {
-    // Render can block direct SMTP connections, so prefer an HTTPS email API in production.
-    const receiver = process.env.EMAIL_RECEIVER?.trim().replace(/\.$/, '') || 'yirgazdofficial@gmail.com';
-    const resendApiKey = process.env.RESEND_API_KEY?.trim();
-    const resendFrom = process.env.RESEND_FROM_EMAIL?.trim();
-
-    if (resendApiKey && resendFrom) {
-      const resendResponse = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: resendFrom,
-          to: [receiver],
-          reply_to: email,
-          subject: `New Portfolio Message from ${name}`,
-          text: `New contact message received.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-        }),
-      });
-
-      if (!resendResponse.ok) {
-        const errorBody = await resendResponse.text();
-        throw new Error(`Resend API ${resendResponse.status}: ${errorBody}`);
-      }
-
-      const savedMessage = await ContactMessage.create({ name, email, message });
-      return res.status(201).json({
-        success: true,
-        message: "Message sent successfully! I'll be in touch soon.",
-        data: savedMessage,
-      });
-    }
-
-    // Local SMTP fallback (normalize input and handle key variations)
-    const user = process.env.EMAIL_USER?.trim().replace(/\.$/, '');
+    const user = process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASS || process.env.EMAIL_APP_PASSWORD;
-    const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
-    const port = parseInt(process.env.EMAIL_PORT || '587', 10);
+    const receiver = process.env.EMAIL_RECEIVER || 'yirgazdofficial@gmail.com';
 
     if (!user || !pass) {
-      return res.status(500).json({ message: 'Email service is not configured on the server. Please contact the administrator.' });
+      console.error('[SMTP Error] EMAIL_USER or EMAIL_PASS environment variables are missing.');
+      return res.status(500).json({ message: 'Mail service is not configured on the server.' });
     }
 
-    // 2. Configure SMTP Transporter
-    // Added family: 4 to force IPv4 and prevent ENETUNREACH network errors on IPv6-restricted environments like Render
-    // Configure transporter manually using port 465 for Gmail to force IPv4
-    // Nodemailer's built-in 'service: gmail' profile can override/ignore the family option.
-    const transporter = nodemailer.createTransport(
-      host === 'smtp.gmail.com' || user.endsWith('@gmail.com')
-        ? {
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: { user, pass },
-            connectionTimeout: 8000,
-            socketTimeout: 8000,
-            family: 4,
-          }
-        : {
-            host,
-            port,
-            secure: port === 465,
-            auth: { user, pass },
-            connectionTimeout: 8000,
-            socketTimeout: 8000,
-            family: 4,
-          }
-    );
+    // Configure transporter using port 587 and STARTTLS (secure: false) with family: 4
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      family: 4,
+      auth: { user, pass },
+      connectionTimeout: 8000,
+      socketTimeout: 8000,
+    });
 
     const mailOptions = {
       from: `"${name}" <${user}>`,
@@ -118,7 +68,8 @@ export const submitContact = async (req, res) => {
       data: savedMessage,
     });
   } catch (err) {
-    console.error('[Contact Error]:', err);
+    // Safe error logging (never logs email passwords/secrets)
+    console.error('[SMTP Error] Failed to send email notification:', err.message);
     res.status(500).json({
       message: `Failed to send message: ${err.message || 'SMTP Connection Error'}`
     });
