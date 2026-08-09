@@ -15,12 +15,45 @@ export const submitContact = async (req, res) => {
   }
 
   try {
-    // 1. Configure SMTP Credentials (normalize input and handle key variations)
+    // Render can block direct SMTP connections, so prefer an HTTPS email API in production.
+    const receiver = process.env.EMAIL_RECEIVER?.trim().replace(/\.$/, '') || 'yirgazdofficial@gmail.com';
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    const resendFrom = process.env.RESEND_FROM_EMAIL?.trim();
+
+    if (resendApiKey && resendFrom) {
+      const resendResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: resendFrom,
+          to: [receiver],
+          reply_to: email,
+          subject: `New Portfolio Message from ${name}`,
+          text: `New contact message received.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        }),
+      });
+
+      if (!resendResponse.ok) {
+        const errorBody = await resendResponse.text();
+        throw new Error(`Resend API ${resendResponse.status}: ${errorBody}`);
+      }
+
+      const savedMessage = await ContactMessage.create({ name, email, message });
+      return res.status(201).json({
+        success: true,
+        message: "Message sent successfully! I'll be in touch soon.",
+        data: savedMessage,
+      });
+    }
+
+    // Local SMTP fallback (normalize input and handle key variations)
     const user = process.env.EMAIL_USER?.trim().replace(/\.$/, '');
     const pass = process.env.EMAIL_PASS || process.env.EMAIL_APP_PASSWORD;
     const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
     const port = parseInt(process.env.EMAIL_PORT || '587', 10);
-    const receiver = process.env.EMAIL_RECEIVER?.trim().replace(/\.$/, '') || 'yirgazdofficial@gmail.com';
 
     if (!user || !pass) {
       return res.status(500).json({ message: 'Email service is not configured on the server. Please contact the administrator.' });
