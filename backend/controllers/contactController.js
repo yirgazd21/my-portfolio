@@ -21,12 +21,21 @@ export const submitContact = async (req, res) => {
 
     // 3. Send Email Notification if Configured
     if (user && pass) {
-      const transporter = nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: { user, pass },
-      });
+      // Cloud providers like Render block port 587 (STARTTLS) outbound traffic.
+      // Using Nodemailer's built-in 'gmail' service uses SSL over port 465.
+      const transporter = nodemailer.createTransport(
+        host === 'smtp.gmail.com' || user.endsWith('@gmail.com')
+          ? {
+              service: 'gmail',
+              auth: { user, pass },
+            }
+          : {
+              host,
+              port,
+              secure: port === 465,
+              auth: { user, pass },
+            }
+      );
 
       const mailOptions = {
         from: `"${name}" <${user}>`,
