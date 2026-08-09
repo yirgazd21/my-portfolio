@@ -28,12 +28,16 @@ export const submitContact = async (req, res) => {
           ? {
               service: 'gmail',
               auth: { user, pass },
+              connectionTimeout: 8000,
+              socketTimeout: 8000,
             }
           : {
               host,
               port,
               secure: port === 465,
               auth: { user, pass },
+              connectionTimeout: 8000,
+              socketTimeout: 8000,
             }
       );
 
@@ -57,12 +61,10 @@ export const submitContact = async (req, res) => {
         `,
       };
 
-      try {
-        await transporter.sendMail(mailOptions);
-        console.log(`[SMTP] Email successfully dispatched to ${receiver}`);
-      } catch (emailErr) {
-        console.error('[SMTP Error] Failed to send email notification:', emailErr);
-      }
+      // Send mail asynchronously in the background so the request responds instantly
+      transporter.sendMail(mailOptions)
+        .then(() => console.log(`[SMTP] Email successfully dispatched to ${receiver}`))
+        .catch((emailErr) => console.error('[SMTP Error] Failed to send email notification:', emailErr));
     } else {
       console.warn('[SMTP Warning] EMAIL_USER and EMAIL_PASS environment variables are not set. Skipping email dispatch.');
     }
