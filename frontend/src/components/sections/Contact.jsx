@@ -9,7 +9,7 @@ import api from '../../utils/api';
 const info = [
   { icon: FiMail, label: 'Email', value: 'yirgazdofficial@gmail.com' },
   { icon: FiMapPin, label: 'Location', value: 'Addis Ababa, Ethiopia' },
-  { icon: FiGithub, label: 'GitHub', value: 'github.com/alexbekele' },
+  { icon: FiGithub, label: 'GitHub', value: 'github.com/yirgazd21' },
 ];
 
 export default function Contact() {

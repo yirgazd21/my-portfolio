@@ -3,7 +3,7 @@ import { TypeAnimation } from 'react-type-animation';
 import { FiGithub, FiLinkedin, FiMail, FiArrowDown } from 'react-icons/fi';
 
 const socials = [
-  { icon: FiGithub, href: 'https://github.com', label: 'GitHub' },
+  { icon: FiGithub, href: 'https://github.com/yirgazd21', label: 'GitHub' },
   { icon: FiLinkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
   { icon: FiMail, href: 'mailto:hello@portfolio.dev', label: 'Email' },
 ];
