@@ -1,6 +1,6 @@
 # 🚀 Premium MERN Stack Portfolio
 
-A professional, fully animated portfolio built with the **MERN Stack** (MongoDB, Express, React, Node.js), **Tailwind CSS**, and **Framer Motion**. Features theme-switching, dynamic admin controls, local image uploads, and actual contact form notifications routed via email.
+A professional, fully animated portfolio built with the **MERN Stack** (MongoDB, Express, React, Node.js), **Tailwind CSS**, and **Framer Motion**. Features theme-switching, dynamic admin controls, local image uploads, and contact form notifications routed via HTTPS Email APIs to bypass cloud hosting SMTP blocks.
 
 ---
 
@@ -14,7 +14,7 @@ A professional, fully animated portfolio built with the **MERN Stack** (MongoDB,
 | **Admins Panel Dashboard** | Secure administrative panel `/admin/dashboard` protected by JWT authentication to manage Experience, Projects, Skills, and Reviews. |
 | **Admin Accounts CRUD** | Active administrators can edit usernames, emails, passwords, and manage other admin user profiles. |
 | **Local File Uploads** | Admins can upload profile pictures directly from local directories using a styled picker interface. |
-| **Nodemailer SMTP Contact Form** | Form submissions are saved in MongoDB and automatically dispatched as formatted HTML emails to your inbox. |
+| **HTTPS Email Notification** | Contact form submissions are saved in MongoDB and routed over HTTPS (Port 443) using **Resend** or **Brevo** APIs, ensuring compatibility with Render's Free tier. |
 | **Verification Auditing** | Public review system where visitors can leave star ratings and comments on each project. |
 
 ---
@@ -24,7 +24,7 @@ A professional, fully animated portfolio built with the **MERN Stack** (MongoDB,
 ```
 portfolio/
 ├── backend/
-│   ├── config/         → MongoDB Connection settings
+│   ├── config/         → MongoDB and Email configurations
 │   ├── controllers/    → Routing endpoints controller handlers
 │   ├── middleware/     → JWT authentication guard
 │   ├── models/         → Mongoose models (Admin, Project, Skill, Experience, Contact)
@@ -75,8 +75,9 @@ cp .env.example .env
 Ensure you set your MongoDB URI, JWT secret, and email credentials:
 - `MONGO_URI`: MongoDB connection string.
 - `JWT_SECRET`: Random hash key.
-- `EMAIL_USER` & `EMAIL_PASS`: Sender credentials (such as a Gmail address and its App Password).
-- `EMAIL_RECEIVER`: Destination email address (defaulting to `yirgazdofficial@gmail.com`).
+- **Email Configurations (Choose ONE)**:
+  - **Option A (Resend - Recommended)**: Set `RESEND_API_KEY` to your Resend API Key, and `EMAIL_RECEIVER` to your registered Resend email address.
+  - **Option B (Brevo)**: Set `BREVO_API_KEY` to your Brevo API key, and `EMAIL_RECEIVER` to your verified sender address.
 
 ### 3. Seed Database (One-time)
 Run the seeder to populate the database with default projects, work history, and the default admin user:
@@ -112,7 +113,7 @@ npm run dev
 | GET | `/api/skills` | Fetch skills list |
 | GET | `/api/experiences` | Fetch career work/education timeline entries |
 | GET | `/api/auth/public-admin` | Retrieve public metadata of the portfolio owner |
-| POST | `/api/contact` | Submit contact form (persists details & routes email) |
+| POST | `/api/contact` | Submit contact form (persists details & routes email over HTTPS) |
 
 ### Protected Endpoints (JWT Header Required)
 | Method | Route | Description |
@@ -144,7 +145,7 @@ This codebase is configured to be hosted on **Render** (backend) and **Vercel** 
   - `MONGO_URI`: Production database.
   - `JWT_SECRET`: Random secure string.
   - `CLIENT_URL`: Your Vercel domain URL (e.g. `https://yourdomain.vercel.app`) to authorize CORS requests.
-  - `EMAIL_USER`, `EMAIL_PASS`, and `EMAIL_RECEIVER`: Configured App email.
+  - `RESEND_API_KEY` (or `BREVO_API_KEY`) and `EMAIL_RECEIVER`: Setup credentials.
 
 ### Vercel (Frontend Service)
 - **Framework Preset**: `Vite`
