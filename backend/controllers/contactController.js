@@ -1,5 +1,5 @@
 import dns from 'dns';
-import nodemailer from 'nodemailer';
+import { transporter } from '../config/mail.js';
 import ContactMessage from '../models/ContactMessage.js';
 
 // Prioritize IPv4 lookups globally to prevent connection failures in IPv6-restricted cloud environments
@@ -16,24 +16,12 @@ export const submitContact = async (req, res) => {
 
   try {
     const user = process.env.EMAIL_USER;
-    const pass = process.env.EMAIL_PASS || process.env.EMAIL_APP_PASSWORD;
     const receiver = process.env.EMAIL_RECEIVER || 'yirgazdofficial@gmail.com';
 
-    if (!user || !pass) {
-      console.error('[SMTP Error] EMAIL_USER or EMAIL_PASS environment variables are missing.');
+    if (!transporter) {
+      console.error('[SMTP Error] EMAIL_USER or EMAIL_PASS environment variables are missing or transporter failed to initialize.');
       return res.status(500).json({ message: 'Mail service is not configured on the server.' });
     }
-
-    // Configure transporter using port 587 and STARTTLS (secure: false) with family: 4
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      family: 4,
-      auth: { user, pass },
-      connectionTimeout: 8000,
-      socketTimeout: 8000,
-    });
 
     const mailOptions = {
       from: `"${name}" <${user}>`,

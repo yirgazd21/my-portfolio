@@ -6,7 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import routes from './routes/index.js';
-import nodemailer from 'nodemailer';
+import { transporter } from './config/mail.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -63,21 +63,10 @@ app.use((err, _req, res, _next) => {
 });
 
 const verifySMTP = async () => {
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS || process.env.EMAIL_APP_PASSWORD;
-  if (!user || !pass) {
+  if (!transporter) {
     console.warn('⚠️ [SMTP Warning] EMAIL_USER and/or EMAIL_PASS not configured. Contact messages will fail to email.');
     return;
   }
-
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    family: 4,
-    auth: { user, pass },
-    connectionTimeout: 8000,
-  });
 
   try {
     await transporter.verify();
